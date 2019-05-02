@@ -13,7 +13,7 @@ require 'pry'
       case input
       when "list songs"
         list_songs
-      when "list artists" 
+      when "list artists"
         list_artists
       when "list genres"
         list_genres
@@ -24,7 +24,7 @@ require 'pry'
       when "list genre"
         list_genre
       when "exit"
-        puts "Goodbye" 
+        puts "Goodbye"
       end
     end
   end
