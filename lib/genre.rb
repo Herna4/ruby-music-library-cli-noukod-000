@@ -1,8 +1,9 @@
 class Genre
-  extend Concerns::Findable
-  attr_accessor :name, :songs
-
   @@all = []
+  attr_accessor :name, :songs
+  extend Concerns::Findable
+  # include Memorable::InstanceMethods
+
   def initialize(name)
     @name = name
     @songs = []
@@ -13,26 +14,19 @@ class Genre
   end
 
   def self.destroy_all
-    @@all.clear
+    all.clear
   end
 
   def save
-    @@all << self
-    self
+    Genre.all << self
   end
 
   def self.create(name)
-    genre = self.new(name)
-    genre.save
-    genre
-  end
-
-  def add_song(song)
-    song.genre = self unless song.genre == self
-    @songs << song unless @songs.include?(song)
+    new(name).tap {|genre| genre.save}
   end
 
   def artists
-    @songs.collect { |song| song.artist }.uniq
+    songs.collect {|song| song.artist}.uniq
   end
+
 end
