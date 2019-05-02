@@ -1,10 +1,9 @@
-require 'pry'
-
 class Song
-  extend Concerns::Findable
-  attr_accessor :name, :artist, :genre
+  # include Memorable::InstanceMethods
 
   @@all = []
+  attr_accessor :name
+  attr_reader :artist, :genre
 
   def initialize(name, artist = "",genre = "")
     @name = name
@@ -17,37 +16,34 @@ class Song
   end
 
   def self.destroy_all
-    @@all.clear
+    all.clear
   end
 
   def save
-    @@all << self
-    self
+    Song.all << self
   end
 
   def self.create(name)
-    song = self.new(name)
-    song.save
-    song
+    new(name).tap {|song| song.save}
   end
 
   def artist=(artist)
     @artist = artist
-    artist.add_song(self)
+    artist.add_song self
   end
 
   def genre=(genre)
     @genre = genre
-    genre.add_song(self)
+    genre.songs << self if !genre.songs.include?(self)
   end
 
   def self.find_by_name(name)
-    all.detect {|song| song.name == name}
- end
+     all.detect {|song| song.name == name}
+  end
 
- def self.find_or_create_by_name(name)
-   find_by_name name or create name
- end
+  def self.find_or_create_by_name(name)
+    find_by_name name or create name
+  end
 
   def self.new_from_filename(filename)
     artist_name, song_name, genre = filename.gsub(".mp3","").split(" - ")
@@ -55,6 +51,6 @@ class Song
   end
 
   def self.create_from_filename(filename)
-    new_from_filename(filename).save
+    new_from_filename(filename).tap {|song| song.save}
   end
 end
